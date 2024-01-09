@@ -1,0 +1,67 @@
+﻿@page "/addins"
+
+@inject UserService UserService
+@inject NavigationManager NavigationManager
+
+<h3>AddIn List</h3>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            @if (UserService.IsAdmin())
+            {
+                <th>Action</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Loop through each coffee data -->
+        @foreach (var addInData in AddInService.GetAllAddIn())
+        {
+            <tr>
+                <!-- Display only the first 5 characters of the coffee ID -->
+                <td title="@addInData.Id">@addInData.Id.ToString()</td>
+                <td>@addInData.Name</td>
+                <td>@string.Format("{0:C}", addInData.Price)</td>
+                @if (UserService.IsAdmin())
+                {
+                    <td>
+                        <!-- Button to navigate to the EditAddIn page with the specific coffee ID -->
+                        <button type="button" class="btn btn-outline-primary btn-sm" @onclick="@(() => EditAddIn(addInData.Id))">
+                            <span class="bi bi-pencil"></span> Edit
+                        </button>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+
+    // Initialize the page on start
+    protected override void OnInitialized()
+    {
+        // Inject sample coffee data to ensure some data exists
+        AddInService.InjectAddInData();
+        base.OnInitialized();
+    }
+
+    // Method to navigate to the EditAddIn page with a specific coffee Id
+    public void EditAddIn(Guid id)
+    {
+        try
+        {
+            // Navigate to the EditAddIn page with the specific coffee ID
+            NavigationManager.NavigateTo($"/EditAddIn/{id}");
+        }
+        catch (Exception ex)
+        {
+            // Handle any navigation errors
+            Console.WriteLine($"Error Navigating: {ex.Message}");
+        }
+    }
+}

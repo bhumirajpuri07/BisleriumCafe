@@ -1,0 +1,37 @@
+[
+  {
+    "Id": "b1d80e3b-7d6d-4365-acf5-08b7c32f1344",
+    "Name": "Cappuccino",
+    "Price": 4.59
+  },
+  {
+    "Id": "1453ef0b-d613-4388-88dd-71a8fd594ddb",
+    "Name": "Mocha",
+    "Price": 4.99
+  },
+  {
+    "Id": "2c15c676-acc0-4f07-accc-562cbb02aa8b",
+    "Name": "Macchiato",
+    "Price": 4.79
+  },
+  {
+    "Id": "791c910c-f2ae-45bd-9276-9484f443f25e",
+    "Name": "Latte",
+    "Price": 4.49
+  },
+  {
+    "Id": "bcdea336-c136-4578-9c8a-561bac3d66cb",
+    "Name": "Java",
+    "Price": 6.99
+  },
+  {
+    "Id": "977c6da8-f2ef-4ea9-8253-7fef705c9f2a",
+    "Name": "Americano",
+    "Price": 6.99
+  },
+  {
+    "Id": "7e5eb0a3-0438-4d35-b20c-6f892bcbf947",
+    "Name": "Espresso",
+    "Price": 5.99
+  }
+]

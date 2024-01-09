@@ -1,0 +1,60 @@
+﻿<!-- Razor page for editing an AddIn with a specified Id -->
+@page "/EditAddIn/{Id:guid}"
+
+<!-- Inject the NavigationManager Service for page navigation -->
+@inject NavigationManager navigationManager
+
+<h3 class="mt-4 mb-3">Edit AddIn</h3>
+
+<!-- EditForm component of Blazor for handling form submission and validation -->
+<EditForm Model="@AddIn" OnValidSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group mb-3">
+        <label for="Name">Name:</label>
+        <!-- InputText component with two-way data binding to the AddIn's Name property -->
+        <InputText id="Name" class="form-control" @bind-Value="AddIn.Name" />
+    </div>
+    <div class="form-group mb-3">
+        <label for="Price">Price:</label>
+        <!-- InputNumber component with two-way data binding to the AddIn's Price property -->
+        <InputNumber id="Price" class="form-control" @bind-Value="AddIn.Price" />
+    </div>
+    <!-- Submit button for saving changes -->
+    <button type="submit" class="btn btn-primary mt-3">Save</button>
+</EditForm>
+
+@code {
+    [Parameter] // Parameter to capture the AddIn Id from the route above /EditAddIn/{Id:guid}
+    public Guid Id { get; set; }
+
+    // AddIn object to store and edit AddIn information
+    public AddIn AddIn;
+
+    // Initialization method runs when the component, i.e., EditAddIn.razor, is initialized
+    protected override void OnInitialized()
+    {
+        // Retrieve the AddIn information based on the specified Id, calling the method from the AddInServices class in the Services folder
+        AddIn = AddInService.GetAddInById(Id);
+        base.OnInitialized();
+    }
+
+    // HandleSubmit method is called on form submission
+    public void HandleSubmit()
+    {
+        try
+        {
+            // Call AddInServices to edit the AddIn with the specified Id and updated Name by calling the EditAddIn method from the AddInServices class in the Services folder
+            AddInService.EditAddIn(Id, AddIn.Name, AddIn.Price);
+
+            // Display a success alert and navigate back to the AddIns page
+            App.Current.MainPage.DisplayAlert("Success", "AddIn Successfully Edited", "Ok");
+            navigationManager.NavigateTo("/AddIns");
+        }
+        catch (Exception ex)
+        {
+            // Display an error alert if an exception occurs during editing
+            App.Current.MainPage.DisplayAlert("Error", $"Error Editing AddIn: {ex.Message}", "Ok");
+        }
+    }
+}

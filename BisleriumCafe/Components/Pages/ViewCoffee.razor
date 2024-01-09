@@ -1,0 +1,67 @@
+﻿@page "/coffees"
+
+@inject UserService UserService
+@inject NavigationManager NavigationManager
+
+<h3>Coffee List</h3>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            @if (UserService.IsAdmin())
+            {
+                <th>Action</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Loop through each coffee data -->
+        @foreach (var coffeeData in CoffeeService.GetAllCoffee())
+        {
+            <tr>
+                <!-- Display only the first 5 characters of the coffee ID -->
+                <td title="@coffeeData.Id">@coffeeData.Id.ToString()</td>
+                <td>@coffeeData.Name</td>
+                <td>@string.Format("{0:C}", coffeeData.Price)</td>
+                @if (UserService.IsAdmin())
+                {
+                    <td>
+                        <!-- Button to navigate to the EditCoffee page with the specific coffee ID -->
+                        <button type="button" class="btn btn-outline-primary btn-sm" @onclick="@(() => EditCoffee(coffeeData.Id))">
+                            <span class="bi bi-pencil"></span> Edit
+                        </button>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+
+    // Initialize the page on start
+    protected override void OnInitialized()
+    {
+        // Inject sample coffee data to ensure some data exists
+        CoffeeService.InjectCoffeeData();
+        base.OnInitialized();
+    }
+
+    // Method to navigate to the EditCoffee page with a specific coffee Id
+    public void EditCoffee(Guid id)
+    {
+        try
+        {
+            // Navigate to the EditCoffee page with the specific coffee ID
+            NavigationManager.NavigateTo($"/EditCoffee/{id}");
+        }
+        catch (Exception ex)
+        {
+            // Handle any navigation errors
+            Console.WriteLine($"Error Navigating: {ex.Message}");
+        }
+    }
+}

@@ -1,0 +1,71 @@
+﻿<!-- Login.razor -->
+@page "/"
+
+@inject UserService UserService
+@inject NavigationManager NavigationManager
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Welcome to Bislerium Cafe</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3 class="mb-3">Login</h3>
+
+            <EditForm Model="@user" OnValidSubmit="@HandleLogin">
+                <DataAnnotationsValidator />
+             
+                <div class="mb-3">
+                    <label for="Username" class="form-label">Username:</label>
+                    <InputText id="Username" @bind-Value="user.Username" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="Password" class="form-label">Password:</label>
+                    <InputText id="Password" @bind-Value="user.Password" type="password" class="form-control" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Login</button>
+
+                @if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    <div class="alert alert-danger mt-3">
+                        @errorMessage
+                        <ValidationSummary />
+                    </div>
+                }
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private User user = new User();
+    private string errorMessage;
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            // Call the Login method from UserService
+            if (UserService.Login(user))
+            {
+                Console.WriteLine("Login successful!");
+                // Navigate to the home page ('/')
+                NavigationManager.NavigateTo("/home");
+            }
+            else
+            {
+                errorMessage = "Invalid username or password";
+                Console.WriteLine(errorMessage);
+                // Clear the password field
+                user.Password = string.Empty;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error during login: {ex.Message}";
+            Console.WriteLine(errorMessage);
+            // Handle other exceptions, if any
+        }
+    }
+}

@@ -1,0 +1,108 @@
+﻿@page "/order"
+@inject NavigationManager navigationManager
+
+@using BisleriumCafe.Models
+@using BisleriumCafe.Services
+
+<h3 class="mt-4 mb-3">Create Order</h3>
+
+<EditForm Model="@order" OnValidSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label for="CustomerName">Customer Name:</label>
+                <InputText id="CustomerName" @bind-Value="order.CustomerName" class="form-control" />
+                <ValidationMessage For="@(() => order.CustomerName)" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="CustomerPhoneNumber">Customer Phone Number:</label>
+                <InputText id="CustomerPhoneNumber" @bind-Value="order.CustomerPhoneNumber" class="form-control" />
+                <ValidationMessage For="@(() => order.CustomerPhoneNumber)" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="SelectedCoffee">Select Coffee:</label>
+                <select id="SelectedCoffee" @bind="selectedCoffeeId" class="form-control">
+                    @foreach (var coffee in availableCoffeeList)
+                    {
+                        <option value="@coffee.Id">@coffee.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label for="SelectedAddIns">Select Add-Ins:</label>
+                @foreach (var addIn in availableAddInList)
+                {
+                    <div class="form-check">
+                        <input type="checkbox" id="addIn@addIn.Id" @onchange="e => HandleAddInChange(e, addIn)" class="form-check-input" />
+                        <label for="addIn@addIn.Id" class="form-check-label">@addIn.Name</label>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="form-group mb-3">
+        <label for="TotalPrice">Total Price:</label>
+        <span id="TotalPrice">@order.TotalPrice.ToString("C")</span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Order</button>
+</EditForm>
+
+
+@code {
+    private Order order = new Order();
+    private List<Coffee> availableCoffeeList;
+    private List<AddIn> availableAddInList;
+    private Guid selectedCoffeeId;
+    private List<Guid> selectedAddInIds = new List<Guid>();
+
+    protected override void OnInitialized()
+    {
+        // Fetch available coffees and add-ins when the page is initialized
+        availableCoffeeList = CoffeeService.GetAllCoffee();
+        availableAddInList = AddInService.GetAllAddIn();
+    }
+
+    private void HandleAddInChange(ChangeEventArgs e, AddIn addIn)
+    {
+        Guid addInId = addIn.Id;
+        if ((bool)e.Value)
+        {
+            selectedAddInIds.Add(addInId);
+        }
+        else
+        {
+            selectedAddInIds.Remove(addInId);
+        }
+
+        // Recalculate the total price when add-ins change
+        order.Coffee = availableCoffeeList.Find(c => c.Id == selectedCoffeeId);
+        order.AddIns = availableAddInList.Where(a => selectedAddInIds.Contains(a.Id)).ToList();
+    }
+
+    private void HandleSubmit()
+    {
+        try
+        {
+            // Save the order
+            OrderService.SaveOrderToJson(order);
+
+            // Display a success alert and navigate to the orders page
+            App.Current.MainPage.DisplayAlert("Success", "Order Successfully Added", "Ok");
+            navigationManager.NavigateTo("/orders");
+        }
+        catch (Exception ex)
+        {
+            // Display an error alert if an exception occurs during submission
+            App.Current.MainPage.DisplayAlert("Error", $"Error Adding Order: {ex.Message}", "Ok");
+        }
+    }
+}

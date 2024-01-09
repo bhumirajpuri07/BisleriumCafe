@@ -1,0 +1,60 @@
+﻿<!-- Razor page for editing a Coffee with a specified Id -->
+@page "/EditCoffee/{Id:guid}"
+
+<!-- Inject the NavigationManager Service for page navigation -->
+@inject NavigationManager navigationManager
+
+<h3 class="mt-4 mb-3">Edit Coffee</h3>
+
+<!-- EditForm component of Blazor for handling form submission and validation -->
+<EditForm Model="@coffee" OnValidSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group mb-3">
+        <label for="Name">Name:</label>
+        <!-- InputText component with two-way data binding to the Coffee's Name property -->
+        <InputText id="Name" class="form-control" @bind-Value="coffee.Name" />
+    </div>
+    <div class="form-group mb-3">
+        <label for="Price">Price:</label>
+        <!-- InputNumber component with two-way data binding to the Coffee's Name property -->
+        <InputNumber id="Price" class="form-control" @bind-Value="coffee.Price" />
+    </div>
+    <!-- Submit button for saving changes -->
+    <button type="submit" class="btn btn-primary mt-3">Save</button>
+</EditForm>
+
+@code {
+    [Parameter] // Parameter to capture the Coffee Id from the route above /EditCoffee/{Id:guid}
+    public Guid Id { get; set; }
+
+    // Coffee object to store and edit Coffee information
+    public Coffee coffee;
+
+    // Initialization method runs when the component, i.e., EditCoffee.razor, is initialized
+    protected override void OnInitialized()
+    {
+        // Retrieve the Coffee information based on the specified Id, calling the method from the CoffeeServices class in the Services folder
+        coffee = CoffeeService.GetCoffeeById(Id);
+        base.OnInitialized();
+    }
+
+    // HandleSubmit method is called on form submission
+    public void HandleSubmit()
+    {
+        try
+        {
+            // Call CoffeeServices to edit the Coffee with the specified Id and updated Name by calling the EditCoffee method from the CoffeeServices class in the Services folder
+            CoffeeService.EditCoffee(Id, coffee.Name, coffee.Price);
+
+            // Display a success alert and navigate back to the Coffees page
+            App.Current.MainPage.DisplayAlert("Success", "Coffee Successfully Edited", "Ok");
+            navigationManager.NavigateTo("/coffees");
+        }
+        catch (Exception ex)
+        {
+            // Display an error alert if an exception occurs during editing
+            App.Current.MainPage.DisplayAlert("Error", $"Error Editing Coffees: {ex.Message}", "Ok");
+        }
+    }
+}

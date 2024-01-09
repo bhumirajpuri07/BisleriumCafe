@@ -1,0 +1,112 @@
+[
+  {
+    "CustomerName": "aman",
+    "CustomerPhoneNumber": "9819313414",
+    "Coffee": {
+      "Id": "1c40a474-4c27-4ca2-aa59-fb5180954bd9",
+      "Name": "Mocha Magic",
+      "Price": 4.99
+    },
+    "AddIns": [
+      {
+        "Id": "6d99d79d-2123-475a-842b-64d73ff180e8",
+        "Name": "Cinnamon Delight",
+        "Price": 2.23
+      }
+    ],
+    "TotalPrice": 7.22,
+    "OrderDate": "2024-01-09T15:59:17.9255634+05:45"
+  },
+  {
+    "CustomerName": "aman",
+    "CustomerPhoneNumber": "9819313414",
+    "Coffee": {
+      "Id": "553b34fb-8e26-43dc-8543-026a7d1d50d2",
+      "Name": "Caramel Dream",
+      "Price": 5.49
+    },
+    "AddIns": [
+      {
+        "Id": "6d99d79d-2123-475a-842b-64d73ff180e8",
+        "Name": "Cinnamon Delight",
+        "Price": 2.23
+      }
+    ],
+    "TotalPrice": 7.72,
+    "OrderDate": "2024-01-09T15:59:17.9287954+05:45"
+  },
+  {
+    "CustomerName": "aman",
+    "CustomerPhoneNumber": "9819313414",
+    "Coffee": {
+      "Id": "553b34fb-8e26-43dc-8543-026a7d1d50d2",
+      "Name": "Caramel Dream",
+      "Price": 5.49
+    },
+    "AddIns": [
+      {
+        "Id": "6d99d79d-2123-475a-842b-64d73ff180e8",
+        "Name": "Cinnamon Delight",
+        "Price": 2.23
+      }
+    ],
+    "TotalPrice": 7.72,
+    "OrderDate": "2024-01-09T15:59:17.9288193+05:45"
+  },
+  {
+    "CustomerName": "ram",
+    "CustomerPhoneNumber": "9819313414",
+    "Coffee": {
+      "Id": "f5c0058b-f84d-4a0d-b138-9f16cc8a60e6",
+      "Name": "Java Code",
+      "Price": 6.99
+    },
+    "AddIns": [
+      {
+        "Id": "6d99d79d-2123-475a-842b-64d73ff180e8",
+        "Name": "Cinnamon Delight",
+        "Price": 2.23
+      },
+      {
+        "Id": "00c6371b-41d7-4289-ad82-815d63c03e26",
+        "Name": "Vanilla Whirl",
+        "Price": 3.99
+      },
+      {
+        "Id": "c8daef21-4afd-4992-b209-b76dbc63387c",
+        "Name": "Cardamom Elixir",
+        "Price": 5.59
+      }
+    ],
+    "TotalPrice": 18.80,
+    "OrderDate": "2024-01-09T15:59:17.9288609+05:45"
+  },
+  {
+    "CustomerName": "aman",
+    "CustomerPhoneNumber": "9819313414",
+    "Coffee": {
+      "Id": "f5c0058b-f84d-4a0d-b138-9f16cc8a60e6",
+      "Name": "Java Code",
+      "Price": 6.99
+    },
+    "AddIns": [
+      {
+        "Id": "6d99d79d-2123-475a-842b-64d73ff180e8",
+        "Name": "Cinnamon Delight",
+        "Price": 2.23
+      },
+      {
+        "Id": "0f522974-ed45-4f16-ab1e-63e36a916c43",
+        "Name": "Honey Harmony",
+        "Price": 4.89
+      },
+      {
+        "Id": "00c6371b-41d7-4289-ad82-815d63c03e26",
+        "Name": "Vanilla Whirl",
+        "Price": 3.99
+      }
+    ],
+    "TotalPrice": 18.10,
+    "OrderDate": "2024-01-09T15:58:45.8828198+05:45"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "Id": "5e03047c-07ec-4bf7-878a-da15904e4753",
+    "Name": "Honey",
+    "Price": 1.99
+  },
+  {
+    "Id": "19a81204-b28e-453b-b7a0-71c950f6a7d4",
+    "Name": "Cocoa Powder",
+    "Price": 2.39
+  },
+  {
+    "Id": "476d0468-8305-411a-a5ab-206e7cf52f0a",
+    "Name": "Cinnamon",
+    "Price": 4.59
+  },
+  {
+    "Id": "26d03296-34a1-47e6-bd1a-d51f9013237f",
+    "Name": "Vanilla",
+    "Price": 3.99
+  },
+  {
+    "Id": "7a8951f4-7db8-4e6d-a944-2e3a1a87f5bb",
+    "Name": "Ginger",
+    "Price": 1.55
+  },
+  {
+    "Id": "288efc7f-26f8-464a-ba45-0c8efa773047",
+    "Name": "Mint",
+    "Price": 5.59
+  },
+  {
+    "Id": "f7572068-9255-4ad1-b5fa-2a40e8babf0a",
+    "Name": "Maple",
+    "Price": 0.99
+  }
+]

@@ -1,0 +1,278 @@
+﻿<!-- OrderList.razor -->
+@page "/orders"
+
+@using IronPdf
+
+@inject NavigationManager navigationManager
+
+@using BisleriumCafe.Models
+@using System.Collections.Generic
+@using System.Globalization
+
+<h3 class="mt-4 mb-3">Order List</h3>
+
+@if (orders != null && orders.Any())
+{
+    <div>
+        <select @bind="selectedTimeRange" class="form-control mb-3">
+            <option value="daily">Daily</option>
+            <option value="monthly">Monthly</option>
+        </select>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Customer Name</th>
+                <th>Customer Phone Number</th>
+                <th>Coffee</th>
+                <th>Add-Ins</th>
+                <th>Total Price</th>
+                <th>Order Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in orders.Where(o => IsOrderInSelectedTimeRange(o.OrderDate)))
+            {
+                <tr>
+                    <td>@order.CustomerName</td>
+                    <td>@order.CustomerPhoneNumber</td>
+                    <td>@order.Coffee.Name</td>
+                    <td>
+                        @if (order.AddIns != null && order.AddIns.Any())
+                        {
+                            foreach (var addIn in order.AddIns)
+                            {
+                                <div>@addIn.Name</div>
+                            }
+                        }
+                    </td>
+                    <td>@order.TotalPrice.ToString("C")</td>
+                    <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Display top-selling coffees and add-ins side by side -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            @if (topSellingCoffees != null && topSellingCoffees.Any())
+            {
+                <div>
+                    <h4>Top Selling Coffees</h4>
+                    <ol>
+                        @foreach (var coffee in topSellingCoffees)
+                        {
+                            <li>@coffee.Key - Quantity: @coffee.Value</li>
+                        }
+                    </ol>
+                </div>
+            }
+        </div>
+
+        <div class="col-md-6">
+            @if (topSellingAddIns != null && topSellingAddIns.Any())
+            {
+                <div>
+                    <h4>Top Selling Add-Ins</h4>
+                    <ol> 
+                        @foreach (var addIn in topSellingAddIns)
+                        {
+                            <li>@addIn.Key - Quantity: @addIn.Value</li>
+                        }
+                    </ol>
+                </div>
+            }
+        </div>
+    </div>
+
+    <h3>Total Revenue: @totalRevenue$</h3>
+
+    <button class="btn btn-primary mt-3" @onclick="DownloadPdf">Download PDF</button>
+}
+else
+{
+    <p>No orders available.</p>
+}
+
+@code {
+    private List<Order> orders;
+    private string selectedTimeRange = "daily";
+    private Dictionary<string, int> topSellingCoffees;
+    private Dictionary<string, int> topSellingAddIns;
+    private decimal totalRevenue;
+
+
+    protected override void OnInitialized()
+    {
+        orders = OrderService.GetAllOrder();
+        // Get top selling coffees and add-ins
+        topSellingCoffees = OrderService.GetTopSellingCoffees();
+        topSellingAddIns = OrderService.GetTopSellingAddIns();
+        // Get total revenue
+        totalRevenue = OrderService.GetTotalRevenue();
+    }
+
+    // Method to check if the order falls within the selected time range
+    private bool IsOrderInSelectedTimeRange(DateTime orderDate)
+    {
+        var startDate = selectedTimeRange == "daily" ? DateTime.Now.Date : new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        var endDate = selectedTimeRange == "daily" ? DateTime.Now.Date.AddDays(1) : new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddDays(1);
+
+        return orderDate >= startDate && orderDate < endDate;
+    }
+
+    public void DownloadPdf()
+{
+    try
+    {
+        IronPdf.License.LicenseKey = "IRONSUITE.AYUSHPURIE.GMAIL.COM.11770-43A8C39170-AZZFHNUBNP2NAFIQ-3GIQZYTFA3O4-N5KDHA3PL6BD-H736MT5HJGQD-WWKOLZHCQPSY-NM75QVHRQLVV-AFPIL7-TW7ZPI42WNWLUA-DEPLOYMENT.TRIAL-AYHXFJ.TRIAL.EXPIRES.08.FEB.2024";
+        var orderList = OrderService.GetOrdersByTimeRange(IsOrderInSelectedTimeRange);
+
+        if (orderList != null && orderList.Any())
+        {
+            // Create a PDF document
+            var pdf = new ChromePdfRenderer();
+
+            // HTML content for PDF
+            var pdfContent = $@"
+                <html>
+                    <head>
+                        <style>
+                            h2, h4, ul, table {{
+                                margin-bottom: 10px;
+                            }}
+                            table {{
+                                width: 100%;
+                                border-collapse: collapse;
+                            }}
+                            th, td {{
+                                border: 1px solid #ddd;
+                                padding: 8px;
+                                text-align: left;
+                            }}
+                            th {{
+                                background-color: #f2f2f2;
+                            }}
+                        </style>
+                    </head>
+                    <body>
+                        <h2>Report</h2>
+                        <h4>Order List - {selectedTimeRange}</h4>
+                        <label>Select Time Range:</label>
+                        <select disabled>
+                            <option value='daily'>Daily</option>
+                            <option value='monthly'>Monthly</option>
+                        </select>
+
+                        <h4>Orders:</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Customer Name</th>
+                                    <th>Phone Number</th>
+                                    <th>Coffee</th>
+                                    <th>Add-Ins</th>
+                                    <th>Total Price</th>
+                                    <th>Order Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>";
+
+            // Add data to the table
+            foreach (var order in orderList)
+            {
+                pdfContent += $@"
+                    <tr>
+                        <td>{order.CustomerName}</td>
+                        <td>{order.CustomerPhoneNumber}</td>
+                        <td>{order.Coffee.Name}</td>
+                        <td>";
+
+                if (order.AddIns != null && order.AddIns.Any())
+                {
+                    pdfContent += "<ul>";
+                    foreach (var addIn in order.AddIns)
+                    {
+                        pdfContent += $"<li>{addIn.Name}</li>";
+                    }
+                    pdfContent += "</ul>";
+                }
+                else
+                {
+                    pdfContent += "<span>No add-ins</span>";
+                }
+
+                pdfContent += $@"</td>
+    <td>{order.TotalPrice.ToString()}</td>
+    <td>{order.OrderDate.ToString()}</td>
+</tr>";
+            }
+
+            pdfContent += @"
+                            </tbody>
+                        </table>";
+
+            // Include top-selling coffees and add-ins
+            pdfContent += $@"
+                        <h4>Top Selling Coffees:</h4>
+                        <ul>";
+
+            foreach (var coffee in topSellingCoffees)
+            {
+                pdfContent += $"<li>{coffee.Key} - Quantity: {coffee.Value}</li>";
+            }
+
+            pdfContent += @"
+                        </ul>";
+
+            pdfContent += $@"
+                        <h4>Top Selling Add-Ins:</h4>
+                        <ul>";
+
+            foreach (var addIn in topSellingAddIns)
+            {
+                pdfContent += $"<li>{addIn.Key} - Quantity: {addIn.Value}</li>";
+            }
+
+            pdfContent += @"
+                        </ul>";
+
+            // Add total revenue
+            pdfContent += $@"
+                        <h3>Total Revenue: {totalRevenue:C}</h3>
+                    </body>
+                </html>";
+
+            // Convert HTML to Pdf
+            var pdfStream = pdf.RenderHtmlAsPdf(pdfContent).Stream;
+
+            // Save the PDF inside the folder
+            string pdfPath = @"C:\Users\kafka\OneDrive\Desktop\BisleriumCafe\BisleriumCafe\Datas\";
+
+            // Combine file Orders.pdf with directory
+            var pdfFilePath = Path.Combine(pdfPath, "Orders.pdf");
+
+            // Create the pdf file
+            using (var fileStream = new System.IO.FileStream(pdfFilePath, System.IO.FileMode.Create))
+            {
+                pdfStream.CopyToAsync(fileStream); // Await the asynchronous copy operation
+            }
+
+            // Show notification
+            App.Current.MainPage.DisplayAlert("Success", "File Downloaded Successfully", "Ok");
+        }
+    }
+    catch (IronSoftware.Exceptions.LicensingException ex)
+    {
+        Console.WriteLine($"IronPDF Licensing Exception: {ex.Message}");
+        // Handle the licensing exception, for example, inform the user about the licensing issue.
+        App.Current.MainPage.DisplayAlert("Error", "IronPDF licensing issue. Please obtain a valid license key.", "Ok");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex);
+    }
+}
+}

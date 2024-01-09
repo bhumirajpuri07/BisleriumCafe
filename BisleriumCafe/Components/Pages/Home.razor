@@ -1,0 +1,13 @@
+﻿@page "/home"
+
+@inject UserService UserService
+
+@if (UserService.IsAdmin())
+{
+    <p>Welcome Admin</p>
+}
+else
+{
+    <p>Welcome Staff</p>
+}
+
